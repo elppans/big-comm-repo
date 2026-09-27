@@ -69,7 +69,7 @@ Essas keyrings são necessárias para validar as assinaturas dos pacotes vindos 
 ## Instalação
 
 ```bash
-temp_dir="$(mktemp -d community-keyring.XXXXXXXXXX)"
+temp_dir="$(mktemp -d big-comm-repo.XXXXXXXXXX)"
 cd "$temp_dir"
 git clone https://github.com/elppans/big-comm-repo.git
 cd big-comm-repo
