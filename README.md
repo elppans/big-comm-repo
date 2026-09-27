@@ -31,7 +31,11 @@ Server = https://repo.biglinux.com.br/stable/$arch
 - **Remoção** (`post_remove`): remove os 4 blocos de repositório do `pacman.conf`, deixando o sistema como estava antes da instalação.
 
 ## Dependências
+>Faça um backup do arquivo /etc/pacman.conf antes de instalar os pacotes:  
 
+```bash
+sudo cp -av /etc/pacman.conf /etc/pacman.conf."$(date +%Y%m%d%H%M)"
+```
 - [`biglinux-keyring`](https://github.com/biglinux/biglinux-keyring)
 
 ```bash
@@ -60,11 +64,7 @@ rm -rf "$temp_dir"
 ```
 
 Essas keyrings são necessárias para validar as assinaturas dos pacotes vindos dos repositórios acima.
-É recomendado fazer um backup do arquivo /etc/pacman.conf antes de instalar os pacotes:
 
-```bash
-sudo cp -av /etc/pacman.conf /etc/pacman.conf."$(date +%Y%m%d%H%M)"
-```
 
 ## Instalação
 
