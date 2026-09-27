@@ -90,7 +90,7 @@ Os repositórios adicionados por este pacote serão removidos automaticamente do
 
 ## Licença
 
-MIT
+[MIT](https://github.com/elppans/big-comm-repo/blob/main/LICENSE)
 
 ## Agradecimentos
 
