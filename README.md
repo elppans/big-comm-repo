@@ -34,7 +34,7 @@ Server = https://repo.biglinux.com.br/stable/$arch
 >Faça um backup do arquivo /etc/pacman.conf antes de instalar os pacotes:  
 
 ```bash
-sudo cp -av /etc/pacman.conf /etc/pacman.conf."$(date +%Y%m%d%H%M)"
+sudo cp -av /etc/pacman.conf /etc/pacman.conf.backup_"$(date +%Y%m%d%H%M)"
 ```
 - [`biglinux-keyring`](https://github.com/biglinux/biglinux-keyring)
 
