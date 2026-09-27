@@ -1,0 +1,121 @@
+#!/bin/bash
+#
+# big-comm-repo.install
+#
+# Garante que os repositórios necessários existam no /etc/pacman.conf,
+# estejam corretos (SigLevel e Server) e, se estiverem diferentes,
+# sejam atualizados. Se já estiverem certos, nada é alterado.
+
+PACMAN_CONF="/etc/pacman.conf"
+
+# Nome do repo -> conteúdo esperado (sem a linha [nome])
+declare -A REPOS
+REPOS[biglinux-update-stable]="SigLevel = PackageRequired
+Server = https://repo.biglinux.com.br/update-stable/\$arch"
+
+REPOS[community-stable]="SigLevel = PackageRequired
+Server = https://repo.communitybig.org/stable/\$arch"
+
+REPOS[community-extra]="SigLevel = PackageRequired
+Server = https://repo.communitybig.org/extra/\$arch"
+
+REPOS[biglinux-stable]="SigLevel = PackageRequired
+Server = https://repo.biglinux.com.br/stable/\$arch"
+
+# Ordem de exibição/inserção (bash associative arrays não garantem ordem)
+REPO_ORDER=(biglinux-update-stable community-stable community-extra biglinux-stable)
+
+_normalize() {
+    # Remove linhas em branco e espaços à direita, para comparação tolerante
+    sed -e 's/[[:space:]]*$//' -e '/^[[:space:]]*$/d'
+}
+
+_extract_block() {
+    # $1 = arquivo, $2 = nome da seção (ex: biglinux-stable)
+    local file="$1" name="$2"
+    awk -v section="[${name}]" '
+        $0 == section {flag=1; print; next}
+        flag && /^\[/ {flag=0}
+        flag {print}
+    ' "$file"
+}
+
+_remove_block() {
+    # $1 = arquivo, $2 = nome da seção -> imprime o arquivo sem aquele bloco
+    local file="$1" name="$2"
+    awk -v section="[${name}]" '
+        $0 == section {flag=1; next}
+        flag && /^\[/ {flag=0}
+        flag {next}
+        {print}
+    ' "$file"
+}
+
+update_repos() {
+    local conf="$PACMAN_CONF"
+    local tmp
+    tmp=$(mktemp)
+    cp "$conf" "$tmp"
+
+    local repo expected current current_norm expected_norm
+
+    for repo in "${REPO_ORDER[@]}"; do
+        expected="[${repo}]
+${REPOS[$repo]}"
+        expected_norm=$(printf '%s\n' "$expected" | _normalize)
+
+        if grep -qx "\[${repo}\]" "$tmp"; then
+            current=$(_extract_block "$tmp" "$repo")
+            current_norm=$(printf '%s\n' "$current" | _normalize)
+
+            if [[ "$current_norm" == "$expected_norm" ]]; then
+                echo "==> [$repo] já está correto, nada a fazer."
+            else
+                echo "==> [$repo] está diferente, atualizando..."
+                _remove_block "$tmp" "$repo" > "${tmp}.new"
+                mv "${tmp}.new" "$tmp"
+                printf '\n%s\n' "$expected" >> "$tmp"
+            fi
+        else
+            echo "==> [$repo] não existe, adicionando..."
+            printf '\n%s\n' "$expected" >> "$tmp"
+        fi
+    done
+
+    cp "$tmp" "$conf"
+    rm -f "$tmp"
+}
+
+remove_repos() {
+    local conf="$PACMAN_CONF"
+    local tmp
+    tmp=$(mktemp)
+    cp "$conf" "$tmp"
+
+    local repo
+
+    for repo in "${REPO_ORDER[@]}"; do
+        if grep -qx "\[${repo}\]" "$tmp"; then
+            echo "==> [$repo] removendo do pacman.conf..."
+            _remove_block "$tmp" "$repo" > "${tmp}.new"
+            mv "${tmp}.new" "$tmp"
+        else
+            echo "==> [$repo] não estava presente, nada a remover."
+        fi
+    done
+
+    cp "$tmp" "$conf"
+    rm -f "$tmp"
+}
+
+post_install() {
+    update_repos
+}
+
+post_upgrade() {
+    update_repos
+}
+
+post_remove() {
+    remove_repos
+}
