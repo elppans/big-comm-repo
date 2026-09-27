@@ -69,9 +69,13 @@ Essas keyrings são necessárias para validar as assinaturas dos pacotes vindos 
 ## Instalação
 
 ```bash
+temp_dir="$(mktemp -d community-keyring.XXXXXXXXXX)"
+cd "$temp_dir"
 git clone https://github.com/elppans/big-comm-repo.git
 cd big-comm-repo
 makepkg -si
+cd -
+rm -rf "$temp_dir"
 ```
 
 Após a instalação, atualize as bases de dados do pacman:
