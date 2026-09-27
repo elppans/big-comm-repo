@@ -32,8 +32,18 @@ Server = https://repo.biglinux.com.br/stable/$arch
 
 ## Dependências
 
-- `biglinux-keyring`
-- `community-keyring`
+- [`biglinux-keyring`](https://github.com/biglinux/biglinux-keyring)
+```bash
+https://github.com/biglinux/biglinux-keyring.git
+cd biglinux-keyring || exit 1
+makepkg -Cris
+```
+- [`community-keyring`](https://github.com/big-comm/community-keyring)
+```bash
+https://github.com/big-comm/community-keyring.git
+cd community-keyring || exit 1
+makepkg -Cris
+```
 
 Essas keyrings são necessárias para validar as assinaturas dos pacotes vindos dos repositórios acima.
 
