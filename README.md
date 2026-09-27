@@ -98,4 +98,4 @@ Os repositórios adicionados por este pacote serão removidos automaticamente do
 
 ## Agradecimentos
 
-Agradecimentos especiais a **Bruno Gonçalves**, criador do **BIGLinux**, e a **Tales A. Mendonça**, criador do **BIGLinux Community**, pelo trabalho contínuo em manter essas distribuições e repositórios disponíveis para toda a comunidade.
+Agradecimentos especiais a **Bruno Gonçalves**, criador do [**BIGLinux**](https://www.biglinux.com.br/), e a **Tales A. Mendonça**, criador do [**BIGLinux Community**](https://communitybig.org/), pelo trabalho contínuo em manter essas distribuições e repositórios disponíveis para toda a comunidade.
