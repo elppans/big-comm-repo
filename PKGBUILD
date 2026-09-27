@@ -1,3 +1,5 @@
+# Maintainer: Marcelo (Elppans) <github.com/elppans>
+
 pkgname=big-comm-repo
 pkgdesc="BIG Community Repository"
 depends=('biglinux-keyring' 'community-keyring')
