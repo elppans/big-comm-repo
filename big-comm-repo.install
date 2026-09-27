@@ -110,10 +110,11 @@ remove_repos() {
 
 post_install() {
     update_repos
+    pacman -Syy
 }
 
 post_upgrade() {
-    update_repos
+    post_install
 }
 
 post_remove() {
