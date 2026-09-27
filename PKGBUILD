@@ -1,4 +1,4 @@
-# Maintainer: Marcelo (Elppans) <github.com/elppans>
+# Maintainer: Marcelo (Elppans) K. <github.com/elppans>
 
 pkgname=big-comm-repo
 pkgdesc="BIG Community Repository"
