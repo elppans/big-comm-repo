@@ -2,7 +2,7 @@
 
 pkgname=big-comm-repo
 pkgdesc="BIG Community Repository"
-depends=('biglinux-keyring' 'community-keyring')
+# depends=('biglinux-keyring' 'community-keyring')
 pkgver=$(date +%y.%m.%d)
 pkgrel=$(date +%H%M)
 epoch=1
