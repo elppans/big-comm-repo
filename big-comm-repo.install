@@ -126,7 +126,23 @@ remove_repos() {
     rm -f "$tmp"
 }
 
+backup_pacman_conf() {
+    local conf="/etc/pacman.conf"
+    local last_backup
+
+    [[ -f "$conf" ]] || return 0
+
+    # Pega o backup mais recente, se existir
+    last_backup=$(ls -1t "${conf}".backup_* 2>/dev/null | head -n1)
+
+    # Só cria novo backup se não existir nenhum ou se o conteúdo mudou
+    if [[ -z "$last_backup" ]] || ! cmp -s "$conf" "$last_backup"; then
+        cp -av "$conf" "${conf}.backup_$(date +%Y%m%d%H%M%S)"
+    fi
+}
+
 post_install() {
+    backup_pacman_conf
     update_keys
     update_repos
 }
