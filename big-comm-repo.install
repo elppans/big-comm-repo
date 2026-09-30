@@ -25,6 +25,9 @@ Server = https://repo.biglinux.com.br/stable/\$arch"
 # Ordem de exibição/inserção (bash associative arrays não garantem ordem)
 REPO_ORDER=(biglinux-update-stable community-stable community-extra biglinux-stable)
 
+# Chaves customizadas BigLinux/BigCommunity
+_BIGCOMM_KEYS=(45EC44879815E2A6 1EA0CEEEB09B44A3)
+
 _normalize() {
     # Remove linhas em branco e espaços à direita, para comparação tolerante
     sed -e 's/[[:space:]]*$//' -e '/^[[:space:]]*$/d'
@@ -49,6 +52,21 @@ _remove_block() {
         flag {next}
         {print}
     ' "$file"
+}
+
+update_keys() {
+    for key in "${_BIGCOMM_KEYS[@]}"; do
+        pacman-key --recv-keys "$key"
+        pacman-key --lsign-key "$key"
+    done
+}
+
+remove_keys() {
+    for key in "${_BIGCOMM_KEYS[@]}"; do
+        if pacman-key --list-keys "$key" &>/dev/null; then
+            pacman-key --delete "$key"
+        fi
+    done
 }
 
 update_repos() {
@@ -109,6 +127,7 @@ remove_repos() {
 }
 
 post_install() {
+    update_keys
     update_repos
 }
 
@@ -118,4 +137,5 @@ post_upgrade() {
 
 post_remove() {
     remove_repos
+    remove_keys
 }
