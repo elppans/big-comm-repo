@@ -24,47 +24,17 @@ SigLevel = PackageRequired
 Server = https://repo.biglinux.com.br/stable/$arch
 ```
 
-- **Instalação/atualização** (`post_install` / `post_upgrade`): verifica cada repositório no `pacman.conf`.
-  - Se já existir e estiver correto → não altera nada.
-  - Se existir mas estiver diferente → atualiza para a configuração correta.
-  - Se não existir → adiciona.
-- **Remoção** (`post_remove`): remove os 4 blocos de repositório do `pacman.conf`, deixando o sistema como estava antes da instalação.
-
-## Dependências
->Faça um backup do arquivo /etc/pacman.conf antes de instalar os pacotes:  
-
-```bash
-sudo cp -av /etc/pacman.conf /etc/pacman.conf.backup_"$(date +%Y%m%d%H%M)"
-```
-- [`biglinux-keyring`](https://github.com/biglinux/biglinux-keyring)
-
-```bash
-sudo ln -sf /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorcdn
-temp_dir="$(mktemp -d biglinux-keyring.XXXXXXXXXX)"
-cd "$temp_dir"
-curl -O https://repo.biglinux.com.br/stable/x86_64/biglinux-keyring-20220827-3-any.pkg.tar.zst
-curl -O https://repo.biglinux.com.br/stable/x86_64/biglinux-keyring-20220827-3-any.pkg.tar.zst.sig
-key_id="$(echo "$(gpg --homedir /etc/pacman.d/gnupg --verify biglinux-keyring-20220827-3-any.pkg.tar.zst.sig biglinux-keyring-20220827-3-any.pkg.tar.zst 2>&1 || true)" | grep -E 'using|usando|usar' | grep -oiE '[0-9a-f]{8,40}')"
-sudo pacman-key --recv-keys "$key_id" --keyserver keyserver.ubuntu.com
-sudo pacman-key --lsign-key "$key_id"
-sudo pacman -U --noconfirm biglinux-keyring-20220827-3-any.pkg.tar.zst
-cd -
-rm -rf "$temp_dir"
-sed -i 's/SyncFirst/# SyncFirst/g' /etc/pacman.conf
-```
-- [`community-keyring`](https://github.com/big-comm/community-keyring)
-```bash
-temp_dir="$(mktemp -d community-keyring.XXXXXXXXXX)"
-cd "$temp_dir"
-git clone https://github.com/big-comm/community-keyring.git
-cd community-keyring
-makepkg -Cris
-cd -
-rm -rf "$temp_dir"
-```
-
-Essas keyrings são necessárias para validar as assinaturas dos pacotes vindos dos repositórios acima.
-
+- **Instalação/atualização** (`post_install` / `post_upgrade`):
+  - Cria um backup do `/etc/pacman.conf` (`pacman.conf.backup_AAAAMMDDHHMMSS`) antes de qualquer alteração.
+  - Importa e assina localmente as chaves dos repositórios BigLinux/BigCommunity.
+  - Verifica cada repositório no `pacman.conf`:
+    - Se já existir e estiver correto → não altera nada.
+    - Se existir mas estiver diferente → atualiza para a configuração correta.
+    - Se não existir → adiciona.
+- **Remoção** (`post_remove`):
+  - Remove os 4 blocos de repositório do `pacman.conf`.
+  - Remove as chaves importadas do keyring do pacman.
+- **Backups**: os arquivos `pacman.conf.backup_*` não são removidos automaticamente e ficam em `/etc`, caso você queira restaurar a configuração anterior.
 
 ## Instalação
 
